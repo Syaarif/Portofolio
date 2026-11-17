@@ -45,3 +45,231 @@
 	--font-mono: 'IBM Plex Mono', monospace;
 	--radius-xs: 2px;
 }
+
+.ui-interactive {
+	transition-property: color, background-color, border-color, opacity, transform;
+	transition-duration: 180ms;
+	transition-timing-function: ease-out;
+}
+
+.ui-interactive:focus-visible {
+	outline: 2px solid var(--primary);
+	outline-offset: 2px;
+}
+
+.ui-button-primary:not(:disabled):not(.ui-disabled):active,
+.ui-button-outline:not(:disabled):not(.ui-disabled):active {
+	transform: translateY(1px);
+}
+
+.ui-nav-link {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+}
+
+.ui-nav-link::after {
+	position: absolute;
+	right: 0;
+	bottom: 7px;
+	left: 0;
+	height: 1px;
+	background-color: currentColor;
+	content: '';
+	transform: scaleX(0);
+	transform-origin: left;
+	transition: transform 180ms ease-out;
+}
+
+.ui-nav-link-active::after {
+	transform: scaleX(1);
+}
+
+.ui-mono-link {
+	min-height: 44px;
+	display: inline-flex;
+	align-items: center;
+}
+
+.ui-project-row {
+	transition: background-color 180ms ease-out;
+}
+
+.ui-project-arrow {
+	transition: opacity 180ms ease-out;
+}
+
+.ui-project-shift {
+	transition: transform 180ms ease-out;
+}
+
+.ui-input {
+	transition: border-color 180ms ease-out;
+}
+
+.ui-brand-link {
+	transition: color 180ms ease-out;
+}
+
+.ui-disabled {
+	cursor: not-allowed;
+	pointer-events: none;
+}
+
+.ui-button-primary:disabled,
+.ui-button-primary.ui-disabled,
+.ui-button-outline:disabled,
+.ui-button-outline.ui-disabled,
+.ui-button-icon:disabled,
+.ui-button-icon.ui-disabled {
+	border-color: var(--line);
+	background-color: var(--surface);
+	color: var(--muted);
+	cursor: not-allowed;
+	transform: none;
+}
+
+.ui-button-primary:not(:disabled):not(.ui-disabled) .ui-button-arrow,
+.ui-button-outline:not(:disabled):not(.ui-disabled) .ui-button-arrow {
+	transition: transform 180ms ease-out;
+}
+
+.ui-theme-icon {
+	transition: transform 200ms ease-out;
+}
+
+.ui-button-primary:not(:disabled):not(.ui-disabled):focus-visible {
+	background-color: color-mix(in srgb, var(--primary) 92%, black);
+}
+
+.dark .ui-button-primary:not(:disabled):not(.ui-disabled):focus-visible {
+	background-color: color-mix(in srgb, var(--primary) 92%, white);
+}
+
+.ui-button-outline:not(:disabled):not(.ui-disabled):focus-visible,
+.ui-button-icon:not(:disabled):not(.ui-disabled):focus-visible {
+	border-color: var(--ink);
+	background-color: var(--surface);
+}
+
+.ui-button-icon:active:not(:disabled):not(.ui-disabled) .ui-theme-icon {
+	transform: rotate(90deg);
+}
+
+.ui-button-primary:not(:disabled):not(.ui-disabled):focus-visible .ui-button-arrow {
+	transform: translateX(3px);
+}
+
+@media (hover: hover) {
+	.ui-button-primary:not(:disabled):not(.ui-disabled):hover {
+		background-color: color-mix(in srgb, var(--primary) 92%, black);
+	}
+
+	.dark .ui-button-primary:not(:disabled):not(.ui-disabled):hover {
+		background-color: color-mix(in srgb, var(--primary) 92%, white);
+	}
+
+	.ui-button-primary:not(:disabled):not(.ui-disabled):hover .ui-button-arrow {
+		transform: translateX(3px);
+	}
+
+	.ui-button-outline:not(:disabled):not(.ui-disabled):hover,
+	.ui-button-icon:not(:disabled):not(.ui-disabled):hover {
+		border-color: var(--ink);
+		background-color: var(--surface);
+	}
+
+	.ui-nav-link:not(.ui-nav-link-active):hover {
+		color: var(--ink);
+	}
+
+	.ui-nav-link:not(.ui-nav-link-active):hover::after {
+		transform: scaleX(1);
+	}
+
+	.ui-mono-link:hover {
+		color: var(--ink);
+	}
+
+	.ui-project-row:hover {
+		background-color: var(--surface);
+	}
+
+	.ui-project-row:hover .ui-project-shift {
+		transform: translateX(4px);
+	}
+
+	.ui-project-row:hover .ui-project-arrow {
+		opacity: 1;
+	}
+
+	.ui-input:not(:disabled):hover {
+		border-color: var(--muted);
+	}
+
+	.ui-brand-link:hover {
+		color: var(--muted);
+	}
+}
+
+.ui-nav-link:focus-visible {
+	color: var(--ink);
+}
+
+.ui-nav-link:active {
+	color: var(--ink);
+}
+
+.ui-nav-link:active::after {
+	transform: scaleX(1);
+}
+
+.ui-nav-link:focus-visible::after {
+	transform: scaleX(1);
+}
+
+.ui-mono-link:focus-visible,
+.ui-mono-link:active {
+	color: var(--ink);
+}
+
+.ui-project-row:focus-within {
+	background-color: var(--surface);
+}
+
+.ui-project-row:focus-within .ui-project-shift {
+	transform: translateX(4px);
+}
+
+.ui-project-row:focus-within .ui-project-arrow {
+	opacity: 1;
+}
+
+.ui-brand-link:focus-visible,
+.ui-brand-link:active {
+	color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.ui-interactive,
+	.ui-nav-link::after,
+	.ui-theme-icon,
+	.ui-project-row,
+	.ui-project-arrow,
+	.ui-project-shift,
+	.ui-input,
+	.ui-brand-link,
+	.ui-button-primary .ui-button-arrow {
+		transition-duration: 0ms;
+	}
+
+	.ui-button-primary:not(:disabled):not(.ui-disabled):active,
+	.ui-button-outline:not(:disabled):not(.ui-disabled):active,
+	.ui-button-icon:active:not(:disabled):not(.ui-disabled) svg,
+	.ui-button-primary:not(:disabled):not(.ui-disabled):hover .ui-button-arrow,
+	.ui-button-primary:not(:disabled):not(.ui-disabled):focus-visible .ui-button-arrow,
+	.ui-project-row:hover .ui-project-shift,
+	.ui-project-row:focus-within .ui-project-shift {
+		transform: none;
+	}
+}

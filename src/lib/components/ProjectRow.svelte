@@ -9,9 +9,9 @@
 	let { project, index }: Props = $props();
 </script>
 
-<div class="flex flex-col gap-2.5 py-7">
+<div class="ui-project-row group flex flex-col gap-2.5 py-7">
 	<div class="flex items-center justify-between">
-		<span class="font-mono text-[11px] tracking-[1.1px]">
+		<span class="ui-project-shift font-mono text-[11px] tracking-[1.1px]">
 			{String(index + 1).padStart(2, '0')}
 		</span>
 
@@ -20,7 +20,11 @@
 			<span class="font-mono text-[11px] tracking-[1.1px]">{project.year}</span>
 
 			{#if project.href}
-				<a href={project.href} aria-label="Buka {project.title}" class="text-primary">
+				<a
+					href={project.href}
+					aria-label="Buka {project.title}"
+					class="ui-project-arrow ui-interactive flex min-h-11 min-w-11 items-center justify-center text-primary opacity-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+				>
 					<svg
 						width="16"
 						height="16"
@@ -38,6 +42,8 @@
 		</div>
 	</div>
 
-	<h2 class="text-[28px] leading-[1.15] font-medium tracking-[-0.5px]">{project.title}</h2>
+	<h2 class="ui-project-shift text-[28px] leading-[1.15] font-medium tracking-[-0.5px]">
+		{project.title}
+	</h2>
 	<p class="text-[15px] leading-[1.55] text-muted">{project.description}</p>
 </div>
