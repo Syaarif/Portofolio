@@ -16,7 +16,7 @@
 		<div
 			class="mx-auto flex h-[60px] max-w-[1440px] items-center justify-between px-6 lg:h-[72px] lg:px-24"
 		>
-			<a href="/" class="text-[15px] font-semibold lg:text-base">nama.kamu</a>
+			<a href="/" class="text-[15px] font-semibold lg:text-base">Muhammad Syaarif</a>
 
 			<div class="flex items-center gap-2 lg:gap-8">
 				<nav class="hidden items-center gap-7 lg:flex">
@@ -85,9 +85,9 @@
 	<!-- hero -->
 	<section class="mx-auto max-w-[1440px] px-6 pt-16 pb-14 lg:px-24 lg:pt-[120px]">
 		<h1
-			class="text-[62px] leading-[0.88] font-medium tracking-[-1.6px] lg:text-[232px] lg:tracking-[-9px]"
+			class="text-[62px] leading-[0.88] font-medium tracking-[-1.6px] lg:text-[100px] lg:tracking-[-9px]"
 		>
-			Nama Kamu
+			Muhammad Syaarif
 		</h1>
 
 		<div class="mt-7 flex flex-col gap-6">
@@ -336,16 +336,16 @@
 			<div
 				class="flex flex-col items-start gap-4 lg:flex-row lg:items-center lg:justify-between lg:gap-6"
 			>
-				<a href="mailto:kamu@email.com" class="font-mono text-xs tracking-[1.1px] text-primary">
-					kamu@email.com
+				<a href="mailto:muhammadsyaarif777@email.com" class="font-mono text-xs tracking-[1.1px] text-primary">
+					muhammadsyaarif777@email.com
 				</a>
 				<div class="flex items-center gap-6">
 					<a href="#proyek" class="font-mono text-[11px] tracking-[1.1px] text-muted">PROYEK</a>
 					<a
-						href="https://github.com/nama-kamu"
+						href="https://github.com/Syaarif"
 						class="font-mono text-[11px] tracking-[1.1px] text-muted">GITHUB</a
 					>
-					<a href="mailto:kamu@email.com" class="font-mono text-[11px] tracking-[1.1px] text-muted">
+					<a href="mailto:muhammadsyaarif777@email.com" class="font-mono text-[11px] tracking-[1.1px] text-muted">
 						EMAIL
 					</a>
 				</div>

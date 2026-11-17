@@ -8,25 +8,25 @@ export type Project = {
 
 export const projects: Project[] = [
 	{
-		title: 'Sistem Absensi Kelas',
-		description: 'Aplikasi pencatatan kehadiran siswa dengan rekap otomatis per bulan.',
-		stack: 'SvelteKit',
+		title: 'Go Finance',
+		description: 'Aplikasi pencatatan keuangan pribadi untuk Android dengan sinkronisasi cloud.',
+		stack: 'Flutter, Dart',
 		year: 2026,
-		href: 'https://github.com/nama-kamu/absensi'
+		href: 'https://github.com/Syaarif/Go-Finance-'
 	},
 	{
-		title: 'Landing Page UKM',
-		description: 'Halaman profil organisasi sekolah dengan formulir pendaftaran anggota.',
-		stack: 'Tailwind',
+		title: 'Smile Photobooth',
+		description: 'Aplikasi photobooth untuk acara, dengan fitur pengambilan foto, filter, dan cetak.',
+		stack: 'Vite',
 		year: 2026,
-		href: 'https://github.com/nama-kamu/ukm'
+		href: 'https://github.com/Syaarif/SmilePhotobooth'
 	},
 	{
-		title: 'Dashboard Jaringan',
-		description: 'Pemantauan status perangkat lab sekolah secara real-time.',
-		stack: 'TypeScript',
+		title: 'Student Violation System',
+		description: 'Sistem informasi pelanggaran siswa untuk sekolah, dengan fitur manajemen data dan laporan.',
+		stack: 'Python',
 		year: 2026,
-		href: 'https://github.com/nama-kamu/dashboard'
+		href: 'https://github.com/Syaarif/STUDENT-VIOLATION-SYSTEM'
 	}
 ];
 
