@@ -62,9 +62,9 @@ const PH = '/images/portfolio';
 
 export const folderPhotos = [
 	{ src: `${PH}/folder/Certificatel - CODEPOLITAN.webp`, alt: 'Foto kegiatan 1' },
-	{ src: `${PH}/folder/photo-02.svg`, alt: 'Foto kegiatan 2' },
-	{ src: `${PH}/folder/photo-03.svg`, alt: 'Foto kegiatan 3' },
-	{ src: `${PH}/folder/photo-04.svg`, alt: 'Foto kegiatan 4' }
+	{ src: `${PH}/folder/smile-photobooth.png`, alt: 'Foto kegiatan 2' },
+	{ src: `${PH}/folder/student-violation-system.png`, alt: 'Foto kegiatan 3' },
+	{ src: `${PH}/folder/Certificate Detail - CODEPOLITAN2.webp`, alt: 'Foto kegiatan 4' }
 ];
 
 // ISI sendiri: nama sekolah dan tahunnya
@@ -78,16 +78,16 @@ export const education: Education[] = [
 ];
 
 export const techStack: TechItem[] = [
-	{ name: 'HTML & CSS', group: 'WEB', icon: `${PH}/stack/stack-01.svg` },
-	{ name: 'JavaScript', group: 'WEB', icon: `${PH}/stack/stack-02.svg` },
-	{ name: 'TypeScript', group: 'WEB', icon: `${PH}/stack/stack-03.svg` },
-	{ name: 'SvelteKit', group: 'WEB', icon: `${PH}/stack/stack-04.svg` },
-	{ name: 'Tailwind', group: 'WEB', icon: `${PH}/stack/stack-05.svg` },
-	{ name: 'Flutter', group: 'MOBILE', icon: `${PH}/stack/stack-06.svg` },
-	{ name: 'Python', group: 'BACKEND', icon: `${PH}/stack/stack-07.svg` },
-	{ name: 'PHP', group: 'BACKEND', icon: `${PH}/stack/stack-09.svg`},
-	{ name: 'MySQL', group: 'BACKEND', icon: `${PH}/stack/stack-10.svg`},
-	{ name: 'Git', group: 'ALAT', icon: `${PH}/stack/stack-08.svg` },
-	{ name: 'Vercel', group: 'ALAT', icon: `${PH}/stack/stack-08.svg` },
-	{ name: 'Metered', group: 'ALAT', icon: `${PH}/stack/stack-08.svg` },
+	{ name: 'HTML & CSS', group: 'WEB', icon: `${PH}/stack/stack-01.png` },
+	{ name: 'JavaScript', group: 'WEB', icon: `${PH}/stack/stack-02.png` },
+	{ name: 'TypeScript', group: 'WEB', icon: `${PH}/stack/stack-03.png` },
+	{ name: 'SvelteKit', group: 'WEB', icon: `${PH}/stack/stack-04.png` },
+	{ name: 'Tailwind', group: 'WEB', icon: `${PH}/stack/stack-05.png` },
+	{ name: 'Flutter', group: 'MOBILE', icon: `${PH}/stack/stack-06.png` },
+	{ name: 'Python', group: 'BACKEND', icon: `${PH}/stack/stack-07.png` },
+	{ name: 'PHP', group: 'BACKEND', icon: `${PH}/stack/stack-08.png` },
+	{ name: 'MySQL', group: 'BACKEND', icon: `${PH}/stack/stack-09.png` },
+	{ name: 'Git', group: 'ALAT', icon: `${PH}/stack/stack-12.png` },
+	{ name: 'Vercel', group: 'ALAT', icon: `${PH}/stack/stack-11.png` },
+	{ name: 'Metered', group: 'ALAT', icon: `${PH}/stack/placeholder.svg` }
 ];

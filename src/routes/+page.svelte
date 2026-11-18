@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { tick } from 'svelte';
 	import { enhance } from '$app/forms';
 	import Button from '$lib/components/Button.svelte';
 	import NavLink from '$lib/components/NavLink.svelte';
@@ -12,12 +13,49 @@
 	type Theme = 'light' | 'dark';
 	type Status = 'idle' | 'loading' | 'success' | 'error';
 
-	let theme: Theme = $state('light');
+	let theme: Theme = $state(
+		typeof document !== 'undefined' && document.documentElement.classList.contains('dark')
+			? 'dark'
+			: 'light'
+	);
 	let status: Status = $state('idle');
 	let menuOpen = $state(false);
+
+	function toggleTheme(event: MouseEvent) {
+		const nextTheme: Theme = theme === 'dark' ? 'light' : 'dark';
+		const root = document.documentElement;
+		const button = event.currentTarget as HTMLButtonElement;
+		const bounds = button.getBoundingClientRect();
+		root.style.setProperty('--theme-x', `${bounds.left + bounds.width / 2}px`);
+		root.style.setProperty('--theme-y', `${bounds.top + bounds.height / 2}px`);
+
+		function applyTheme() {
+			theme = nextTheme;
+			root.dataset.theme = nextTheme;
+			root.classList.toggle('dark', nextTheme === 'dark');
+			try {
+				localStorage.setItem('portfolio-theme', nextTheme);
+			} catch (error) {
+				console.warn('Unable to save the portfolio theme.', error);
+			}
+		}
+
+		if (
+			typeof document.startViewTransition === 'function' &&
+			!window.matchMedia('(prefers-reduced-motion: reduce)').matches
+		) {
+			document.startViewTransition(async () => {
+				applyTheme();
+				await tick();
+			});
+		} else {
+			applyTheme();
+		}
+	}
 </script>
-<div class="relative isolate min-h-dvh bg-bg text-ink {theme === 'dark' ? 'dark' : ''}">
-	<SpaceSky {theme} />
+
+<div class="relative isolate min-h-dvh bg-bg text-ink">
+	<SpaceSky />
 
 	<header class="sticky top-4 z-50 px-4 sm:px-6">
 		<!-- Bentuk Dynamic Island (Pill) -->
@@ -42,8 +80,8 @@
 
 				<Button
 					variant="icon"
-					aria-label="Ganti tema"
-					onclick={() => (theme = theme === 'dark' ? 'light' : 'dark')}
+					aria-label={theme === 'dark' ? 'Ganti ke tema terang' : 'Ganti ke tema gelap'}
+					onclick={toggleTheme}
 				>
 					<svg
 						width="17"
@@ -157,11 +195,15 @@
 	<!-- band -->
 	<div class="border-t border-line">
 		<img
-			src={theme === 'dark' ? '/images/band-dark.png' : '/images/band-light.png'}
+			src="/images/band-light.png"
 			alt="band"
-			class="h-[220px] w-full object-cover lg:h-[420px]"
+			class="h-[220px] w-full object-cover lg:h-[420px] dark:hidden"
 		/>
-
+		<img
+			src="/images/band-dark.png"
+			alt="band"
+			class="hidden h-[220px] w-full object-cover lg:h-[420px] dark:block"
+		/>
 	</div>
 
 	<!-- proyek -->
@@ -184,13 +226,13 @@
 
 			<div class="mt-7 flex flex-col items-start gap-8 lg:mt-10 lg:flex-row lg:gap-24">
 				<HoverPhoto
-					normal={theme === 'dark' ? '/images/portrait-dark.png' : '/images/portrait-light.png'}
+					normal="/images/portrait-light.png"
+					darkNormal="/images/portrait-dark.png"
 					hover="/images/portfolio/hover/profile-hover.png"
 					alt="Foto profil"
 					radius={50}
 					class="h-[428px] w-full lg:h-[525px] lg:w-[420px]"
 				/>
-/>
 
 				<div class="flex w-full flex-col gap-7">
 					<p class="max-w-[520px] text-[17px] leading-[1.6] text-muted lg:text-xl">
@@ -226,16 +268,16 @@
 	</section>
 
 	<!-- Galeri -->
-		<section id="galeri" class="border-t border-line">
-			<div class="mx-auto max-w-[1440px] px-6 pt-5 pb-14 lg:px-24 lg:pb-24">
-				<p class="font-mono text-[11px] tracking-[1.1px]">GALERI</p>
-				<div class="mt-7 grid grid-cols-1 gap-16 lg:mt-10 lg:grid-cols-2 lg:gap-24">
-					<GlassFolder photos={folderPhotos} label="Certificate" />
-					<GlassFolder photos={folderPhotos} label="Project" />
-				</div>
+	<section id="galeri" class="border-t border-line">
+		<div class="mx-auto max-w-[1440px] px-6 pt-5 pb-14 lg:px-24 lg:pb-24">
+			<p class="font-mono text-[11px] tracking-[1.1px]">GALERI</p>
+			<div class="mt-7 grid grid-cols-1 gap-16 lg:mt-10 lg:grid-cols-2 lg:gap-24">
+				<GlassFolder photos={folderPhotos} label="Certificate" />
+				<GlassFolder photos={folderPhotos} label="Project" />
 			</div>
-		</section>
-		<Credentials {education} {techStack} />
+		</div>
+	</section>
+	<Credentials {education} {techStack} />
 
 	<!-- kontak -->
 	<section id="kontak" class="border-t border-line">

@@ -1,11 +1,16 @@
 <script lang="ts">
 	import { untrack } from 'svelte';
 
-	type Props = { theme: 'light' | 'dark' };
 	type Star = { x: number; y: number; r: number; ph: number; sp: number; d: number };
-	type Cloud = { x: number; y: number; scale: number; speed: number; sprite: number; alpha: number };
+	type Cloud = {
+		x: number;
+		y: number;
+		scale: number;
+		speed: number;
+		sprite: number;
+		alpha: number;
+	};
 
-	let { theme }: Props = $props();
 	let canvas: HTMLCanvasElement | undefined = $state();
 
 	// ── warna: ubah di sini ──
@@ -15,12 +20,22 @@
 	const LIGHT_BOTTOM = '#ffffff';
 	const STAR = '#bde8f5';
 
-	let target = untrack(() => (theme === 'light' ? 1 : 0)); // 0 = malam, 1 = siang
+	let target = untrack(() =>
+		typeof document !== 'undefined' && document.documentElement.classList.contains('dark') ? 0 : 1
+	); // 0 = malam, 1 = siang
 	let kick: (() => void) | undefined;
 
 	$effect(() => {
-		target = theme === 'light' ? 1 : 0;
-		kick?.();
+		const root = document.documentElement;
+		const syncTheme = () => {
+			target = root.classList.contains('dark') ? 0 : 1;
+			kick?.();
+		};
+		const observer = new MutationObserver(syncTheme);
+		observer.observe(root, { attributes: true, attributeFilter: ['class'] });
+		syncTheme();
+
+		return () => observer.disconnect();
 	});
 
 	// awan dibuat sekali sebagai gambar, lalu hanya digeser
@@ -239,4 +254,8 @@
 	});
 </script>
 
-<canvas bind:this={canvas} aria-hidden="true" class="pointer-events-none fixed inset-0 -z-10 h-full w-full"></canvas>
+<canvas
+	bind:this={canvas}
+	aria-hidden="true"
+	class="pointer-events-none fixed inset-0 -z-10 h-full w-full"
+></canvas>

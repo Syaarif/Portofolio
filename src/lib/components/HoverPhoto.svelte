@@ -1,92 +1,86 @@
 <script lang="ts">
+	import { Spring } from 'svelte/motion';
+
 	type Props = {
 		normal: string;
+		darkNormal?: string;
 		hover: string;
 		alt: string;
 		class?: string;
 		radius?: number; // jari-jari lingkaran di sekitar kursor (px)
 	};
 
-	let { normal, hover, alt, class: className = '', radius = 110 }: Props = $props();
+	let { normal, darkNormal, hover, alt, class: className = '', radius = 110 }: Props = $props();
 
 	let box: HTMLDivElement | undefined = $state();
-
-	// x, y, r = yang tampil; tx, ty, tr = tujuan
-	let x = 0;
-	let y = 0;
-	let r = 0;
-	let tx = 0;
-	let ty = 0;
-	let tr = 0;
-	let raf = 0;
+	let touching = false;
+	const cursor = new Spring(
+		{ x: 0, y: 0, r: 0 },
+		{ stiffness: 0.2, damping: 0.78, precision: 0.1 }
+	);
 
 	const reduce = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-	function paint() {
-		if (!box) return;
-		box.style.setProperty('--x', `${x}px`);
-		box.style.setProperty('--y', `${y}px`);
-		box.style.setProperty('--r', `${r}px`);
-		box.style.setProperty('--show', r > 0.5 ? '1' : '0');
-	}
-
-	function tick() {
-		const snap = reduce();
-		x += (tx - x) * (snap ? 1 : 0.2);
-		y += (ty - y) * (snap ? 1 : 0.2);
-		r += (tr - r) * (snap ? 1 : 0.14);
-		if (Math.abs(tx - x) < 0.3 && Math.abs(ty - y) < 0.3 && Math.abs(tr - r) < 0.3) {
-			x = tx;
-			y = ty;
-			r = tr;
-			paint();
-			raf = 0;
-			return;
+	function setCursor(x: number, y: number, r: number) {
+		const target = { x, y, r };
+		if (reduce()) {
+			void cursor.set(target, { instant: true });
+		} else {
+			cursor.target = target;
 		}
-		paint();
-		raf = requestAnimationFrame(tick);
-	}
-
-	function run() {
-		if (!raf) raf = requestAnimationFrame(tick);
 	}
 
 	function point(e: PointerEvent) {
-		const b = box!.getBoundingClientRect();
-		tx = e.clientX - b.left;
-		ty = e.clientY - b.top;
+		const bounds = box!.getBoundingClientRect();
+		return { x: e.clientX - bounds.left, y: e.clientY - bounds.top };
 	}
 
 	function enter(e: PointerEvent) {
-		point(e);
-		x = tx; // lingkaran tumbuh tepat di posisi kursor
-		y = ty;
-		tr = radius;
-		run();
+		if (e.pointerType === 'touch' || !matchMedia('(pointer: fine)').matches) return;
+		const { x, y } = point(e);
+		setCursor(x, y, radius);
 	}
 
 	function move(e: PointerEvent) {
-		point(e);
-		tr = radius;
-		run();
+		if (e.pointerType === 'touch') {
+			if (!touching) return;
+		} else if (!matchMedia('(pointer: fine)').matches) {
+			return;
+		}
+
+		const { x, y } = point(e);
+		setCursor(x, y, radius);
 	}
 
-	function leave() {
-		tr = 0;
-		run();
+	function press(e: PointerEvent) {
+		if (e.pointerType !== 'touch') return;
+		touching = true;
+		box?.setPointerCapture(e.pointerId);
+		const { x, y } = point(e);
+		setCursor(x, y, radius);
 	}
 
-	// keyboard: fokus membuka seluruh foto hover
+	function release() {
+		if (!touching) return;
+		touching = false;
+		setCursor(cursor.target.x, cursor.target.y, 0);
+	}
+
+	function leave(e: PointerEvent) {
+		if (e.pointerType === 'touch') {
+			release();
+			return;
+		}
+		if (matchMedia('(pointer: fine)').matches) {
+			setCursor(cursor.target.x, cursor.target.y, 0);
+		}
+	}
+
 	function focus(e: FocusEvent) {
 		if (!(e.currentTarget as HTMLElement).matches(':focus-visible')) return;
-		const b = box!.getBoundingClientRect();
-		tx = b.width / 2;
-		ty = b.height / 2;
-		tr = Math.hypot(b.width, b.height) / 2 + 4;
-		run();
+		const bounds = box!.getBoundingClientRect();
+		setCursor(bounds.width / 2, bounds.height / 2, Math.hypot(bounds.width, bounds.height) / 2 + 4);
 	}
-
-	$effect(() => () => cancelAnimationFrame(raf));
 </script>
 
 <!-- tabindex agar efek bisa dibuka dengan keyboard -->
@@ -100,11 +94,24 @@
 	onpointerenter={enter}
 	onpointermove={move}
 	onpointerleave={leave}
+	onpointerdown={press}
+	onpointerup={release}
 	onpointercancel={leave}
+	onlostpointercapture={release}
 	onfocus={focus}
-	onblur={leave}
+	onblur={() => setCursor(cursor.target.x, cursor.target.y, 0)}
+	style={`--x:${cursor.current.x}px; --y:${cursor.current.y}px; --r:${cursor.current.r}px; --show:${cursor.current.r > 0.5 ? 1 : 0};`}
 >
-	<img src={normal} alt="" class="absolute inset-0 h-full w-full object-cover" />
+	{#if darkNormal}
+		<img src={normal} alt="" class="absolute inset-0 h-full w-full object-cover dark:hidden" />
+		<img
+			src={darkNormal}
+			alt=""
+			class="absolute inset-0 hidden h-full w-full object-cover dark:block"
+		/>
+	{:else}
+		<img src={normal} alt="" class="absolute inset-0 h-full w-full object-cover" />
+	{/if}
 	<img
 		src={hover}
 		alt=""
@@ -116,10 +123,6 @@
 
 <style>
 	.hover-photo {
-		--x: 0px;
-		--y: 0px;
-		--r: 0px;
-		--show: 0;
 		outline: none;
 		touch-action: pan-y;
 	}
