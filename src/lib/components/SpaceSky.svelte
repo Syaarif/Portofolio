@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { untrack } from 'svelte';
 
-	type Star = { x: number; y: number; r: number; ph: number; sp: number; d: number };
+	type Star = { x: number; y: number; size: number; duration: number; delay: number };
 	type Cloud = {
 		x: number;
 		y: number;
@@ -12,13 +12,26 @@
 	};
 
 	let canvas: HTMLCanvasElement | undefined = $state();
+	let tabHidden = $state(false);
+
+	function seeded(index: number, salt: number) {
+		const value = Math.sin((index + 1) * 127.1 + salt * 311.7) * 43758.5453;
+		return value - Math.floor(value);
+	}
+
+	const stars: Star[] = Array.from({ length: 64 }, (_, i) => ({
+		x: seeded(i, 1) * 100,
+		y: seeded(i, 2) * 100,
+		size: 1 + seeded(i, 3) * 1.8,
+		duration: 2.4 + seeded(i, 4) * 3.8,
+		delay: -seeded(i, 5) * 6.2
+	}));
 
 	// ── warna: ubah di sini ──
 	const DARK_TOP = '#040b1f';
 	const DARK_BOTTOM = '#0a1c3d';
 	const LIGHT_TOP = '#b9daf3';
 	const LIGHT_BOTTOM = '#ffffff';
-	const STAR = '#bde8f5';
 
 	let target = untrack(() =>
 		typeof document !== 'undefined' && document.documentElement.classList.contains('dark') ? 0 : 1
@@ -71,36 +84,31 @@
 		const ctx = el?.getContext('2d');
 		if (!el || !ctx) return;
 
-		const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+		const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
+		let reduce = motionPreference.matches;
 		let mix = target;
 		let w = 0;
 		let h = 0;
 		let raf = 0;
 		let last = 0;
-		let nextShot = 4000;
+		let nextShot = 12000 + Math.random() * 8000;
 		let darkGrad: CanvasGradient;
 		let lightGrad: CanvasGradient;
-		const mouse = { x: 0, y: 0 };
-		const goal = { x: 0, y: 0 };
 		const shot = { on: false, x: 0, y: 0, dx: 0, dy: 0, born: 0 };
 
-		const stars: Star[] = Array.from({ length: 420 }, () => ({
-			x: Math.random(),
-			y: Math.random(),
-			r: 0.4 + Math.random() ** 3 * 1.6,
-			ph: Math.random() * 6.28,
-			sp: 0.0008 + Math.random() * 0.002,
-			d: 0.2 + Math.random() * 0.8
-		}));
 		const sprites = [makeCloud(), makeCloud(), makeCloud()];
-		const clouds: Cloud[] = Array.from({ length: 8 }, (_, i) => ({
-			x: Math.random(),
-			y: 0.05 + Math.random() * 0.75,
-			scale: 0.7 + Math.random() * 1.1,
-			speed: 0.005 + Math.random() * 0.012,
-			sprite: i % 3,
-			alpha: 0.55 + Math.random() * 0.4
-		}));
+		let clouds: Cloud[] = [];
+
+		function createClouds(count: number) {
+			return Array.from({ length: count }, (_, i) => ({
+				x: Math.random(),
+				y: 0.05 + Math.random() * 0.75,
+				scale: 0.7 + Math.random() * 1.1,
+				speed: 0.005 + Math.random() * 0.012,
+				sprite: i % 3,
+				alpha: 0.55 + Math.random() * 0.4
+			}));
+		}
 
 		function resize() {
 			const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -115,6 +123,8 @@
 			lightGrad = ctx!.createLinearGradient(0, 0, 0, h);
 			lightGrad.addColorStop(0, LIGHT_TOP);
 			lightGrad.addColorStop(1, LIGHT_BOTTOM);
+			const cloudCount = window.matchMedia('(max-width: 639px)').matches ? 3 : 8;
+			if (clouds.length !== cloudCount) clouds = createClouds(cloudCount);
 			if (reduce) draw(0);
 		}
 
@@ -135,18 +145,6 @@
 				ng.addColorStop(1, 'rgba(28,77,141,0)');
 				c.fillStyle = ng;
 				c.fillRect(0, 0, w, h);
-
-				// bintang berkedip, dengan parallax kecil mengikuti kursor
-				const n = Math.min(stars.length, Math.max(120, Math.round((w * h) / 5000)));
-				c.fillStyle = STAR;
-				for (let i = 0; i < n; i++) {
-					const s = stars[i];
-					const tw = 0.5 + 0.5 * Math.sin(t * s.sp + s.ph);
-					c.globalAlpha = 0.25 + 0.75 * tw;
-					c.beginPath();
-					c.arc(s.x * w + mouse.x * 28 * s.d, s.y * h + mouse.y * 18 * s.d, s.r, 0, Math.PI * 2);
-					c.fill();
-				}
 
 				// bintang jatuh
 				if (shot.on) {
@@ -198,8 +196,6 @@
 			const dt = last ? Math.min(t - last, 64) : 16;
 			last = t;
 			mix += Math.sign(target - mix) * Math.min(Math.abs(target - mix), dt / 1100);
-			mouse.x += (goal.x - mouse.x) * 0.06;
-			mouse.y += (goal.y - mouse.y) * 0.06;
 
 			if (!shot.on && t > nextShot && mix < 0.5) {
 				const a = ((150 + Math.random() * 20) * Math.PI) / 180;
@@ -211,22 +207,31 @@
 					dy: Math.sin(a),
 					born: t
 				});
-				nextShot = t + 6000 + Math.random() * 9000;
+				nextShot = t + 18000 + Math.random() * 22000;
 			}
 
 			draw(t);
 			raf = requestAnimationFrame(loop);
 		}
 
-		function onMove(e: PointerEvent) {
-			goal.x = e.clientX / w - 0.5;
-			goal.y = e.clientY / h - 0.5;
-		}
-
 		function onVisibility() {
+			tabHidden = document.hidden;
 			cancelAnimationFrame(raf);
 			last = 0;
-			if (!document.hidden) raf = requestAnimationFrame(loop);
+			if (!document.hidden && !reduce) raf = requestAnimationFrame(loop);
+		}
+
+		function onMotionPreferenceChange() {
+			reduce = motionPreference.matches;
+			cancelAnimationFrame(raf);
+			last = 0;
+			if (reduce) {
+				shot.on = false;
+				mix = target;
+				draw(0);
+			} else if (!document.hidden) {
+				raf = requestAnimationFrame(loop);
+			}
 		}
 
 		kick = () => {
@@ -237,10 +242,11 @@
 		};
 
 		resize();
+		tabHidden = document.hidden;
 		window.addEventListener('resize', resize);
-		if (!reduce) {
-			window.addEventListener('pointermove', onMove);
-			document.addEventListener('visibilitychange', onVisibility);
+		document.addEventListener('visibilitychange', onVisibility);
+		motionPreference.addEventListener('change', onMotionPreferenceChange);
+		if (!reduce && !document.hidden) {
 			raf = requestAnimationFrame(loop);
 		}
 
@@ -248,14 +254,78 @@
 			kick = undefined;
 			cancelAnimationFrame(raf);
 			window.removeEventListener('resize', resize);
-			window.removeEventListener('pointermove', onMove);
 			document.removeEventListener('visibilitychange', onVisibility);
+			motionPreference.removeEventListener('change', onMotionPreferenceChange);
 		};
 	});
 </script>
+
+<div class="star-field" class:paused={tabHidden} aria-hidden="true">
+	{#each stars as star, i (i)}
+		<span
+			class="sky-star animate-twinkle {i >= 28 ? 'sky-star-desktop' : ''}"
+			style={`--x:${star.x}%; --y:${star.y}%; --size:${star.size}px; --duration:${star.duration}s; --delay:${star.delay}s;`}
+		></span>
+	{/each}
+</div>
 
 <canvas
 	bind:this={canvas}
 	aria-hidden="true"
 	class="pointer-events-none fixed inset-0 -z-10 h-full w-full"
 ></canvas>
+
+<style>
+	.star-field {
+		position: fixed;
+		z-index: -9;
+		inset: 0;
+		overflow: hidden;
+		pointer-events: none;
+		opacity: 0;
+		transition: opacity 500ms var(--ease-out-expo);
+	}
+
+	:global(.dark) .star-field {
+		opacity: 1;
+	}
+
+	.sky-star {
+		position: absolute;
+		top: var(--y);
+		left: var(--x);
+		width: var(--size);
+		height: var(--size);
+		border-radius: 50%;
+		background: #bde8f5;
+		animation-duration: var(--duration);
+		animation-delay: var(--delay);
+		animation-play-state: paused;
+	}
+
+	:global(.dark) .sky-star {
+		animation-play-state: running;
+	}
+
+	.star-field.paused .sky-star {
+		animation-play-state: paused;
+	}
+
+	@media (max-width: 639px) {
+		.sky-star-desktop {
+			display: none;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.star-field {
+			transition: none;
+		}
+
+		.sky-star {
+			animation: none;
+			opacity: 0.7;
+			transform: none;
+		}
+	}
+</style>

@@ -70,6 +70,18 @@ export const folderPhotos = [
 // ISI sendiri: nama sekolah dan tahunnya
 export const education: Education[] = [
 	{
+		school: 'SDN METESEH SEMARANG',
+		major: 'Sekolah Dasar',
+		period: '2016 - 2022',
+		logo: `${PH}/edu/edu-03.png`
+	},
+	{
+		school: 'SMPN 29 SEMARANG',
+		major: 'Seni Rupa',
+		period: '2022 - 2025',
+		logo: `${PH}/edu/edu-02.png`
+	},
+	{
 		school: 'SMKN 8 SEMARANG',
 		major: 'Pengembangan Perangkat Lunak dan Gim (PPLG)',
 		period: '2025 - Sekarang',

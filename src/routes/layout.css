@@ -46,6 +46,74 @@
 	--radius-xs: 2px;
 	--ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 	--ease-spring: linear(0, 0.2 12%, 0.65 35%, 1.05 60%, 1 80%, 1);
+	--animate-twinkle: twinkle 3s var(--ease-out-expo) infinite alternate;
+
+	@keyframes twinkle {
+		0%,
+		100% {
+			opacity: 0.25;
+			transform: scale(0.78);
+		}
+
+		50% {
+			opacity: 1;
+			transform: scale(1.16);
+		}
+	}
+}
+
+@keyframes section-reveal {
+	from {
+		opacity: 0;
+		transform: translateY(18px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@supports (animation-timeline: view()) and (animation-range: entry 0% entry 30%) {
+	.scroll-reveal {
+		animation: section-reveal 1s linear both;
+		animation-timeline: view();
+		animation-range: entry 0% entry 30%;
+	}
+}
+
+.scroll-reveal-pending {
+	opacity: 0;
+	transform: translateY(18px);
+	transition:
+		opacity 600ms var(--ease-out-expo),
+		transform 600ms var(--ease-out-expo);
+}
+
+.scroll-reveal-visible {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+section[id] {
+	scroll-margin-top: 6rem;
+}
+
+html.lenis section[id] {
+	scroll-margin-top: 0;
+}
+
+.scroll-progress {
+	position: fixed;
+	z-index: 110;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 2px;
+	pointer-events: none;
+	background: var(--primary);
+	transform: scaleX(var(--scroll-progress, 0));
+	transform-origin: left center;
 }
 
 body::after {
@@ -64,18 +132,36 @@ body::after {
 	transition-timing-function: var(--ease-out-expo);
 }
 
+.ui-interactive.ui-button-primary {
+	transition-property: opacity, translate;
+}
+
 .ui-interactive:focus-visible {
 	outline: 2px solid var(--primary);
 	outline-offset: 2px;
 }
 
-.ui-button-primary:not(:disabled):not(.ui-disabled):active,
 .ui-button-outline:not(:disabled):not(.ui-disabled):active {
 	transform: translateY(1px);
 }
 
+.ui-button-primary:not(:disabled):not(.ui-disabled) {
+	transform: translate(var(--magnetic-x, 0px), var(--magnetic-y, 0px));
+}
+
+.ui-button-primary:not(:disabled):not(.ui-disabled):active {
+	translate: 0 1px;
+}
+
 .ui-nav-link {
 	position: relative;
+	display: inline-flex;
+	align-items: center;
+}
+
+.ui-mono-link {
+	position: relative;
+	min-height: 44px;
 	display: inline-flex;
 	align-items: center;
 }
@@ -93,14 +179,21 @@ body::after {
 	transition: transform 180ms var(--ease-out-expo);
 }
 
-.ui-nav-link-active::after {
-	transform: scaleX(1);
+.ui-mono-link::after {
+	position: absolute;
+	right: 0;
+	bottom: 7px;
+	left: 0;
+	height: 1px;
+	background-color: currentColor;
+	content: '';
+	transform: scaleX(0);
+	transform-origin: left;
+	transition: transform 180ms var(--ease-out-expo);
 }
 
-.ui-mono-link {
-	min-height: 44px;
-	display: inline-flex;
-	align-items: center;
+.ui-nav-link-active::after {
+	transform: scaleX(1);
 }
 
 .ui-project-arrow {
@@ -228,6 +321,12 @@ body::after {
 	transform: scaleX(1);
 }
 
+.ui-mono-link:hover::after,
+.ui-mono-link:focus-visible::after,
+.ui-mono-link:active::after {
+	transform: scaleX(1);
+}
+
 .ui-mono-link:focus-visible,
 .ui-mono-link:active {
 	color: var(--ink);
@@ -250,9 +349,36 @@ body::after {
 	color: var(--ink);
 }
 
+.hero-word {
+	display: inline-block;
+	animation: hero-word-reveal 700ms var(--ease-out-expo) calc(var(--i) * 70ms) both;
+}
+
+@keyframes hero-word-reveal {
+	from {
+		opacity: 0;
+		transform: translateY(0.65em);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
 @media (prefers-reduced-motion: reduce) {
+	.scroll-reveal,
+	.scroll-reveal-pending,
+	.scroll-reveal-visible {
+		animation: none !important;
+		opacity: 1 !important;
+		transform: none !important;
+		transition: none !important;
+	}
+
 	.ui-interactive,
 	.ui-nav-link::after,
+	.ui-mono-link::after,
 	.ui-theme-icon,
 	.ui-project-arrow,
 	.ui-project-shift,
@@ -262,11 +388,22 @@ body::after {
 
 	.ui-button-primary:not(:disabled):not(.ui-disabled):active,
 	.ui-button-outline:not(:disabled):not(.ui-disabled):active,
+	.ui-button-primary:not(:disabled):not(.ui-disabled),
 	.ui-button-icon:active:not(:disabled):not(.ui-disabled) svg,
 	.ui-button-primary:not(:disabled):not(.ui-disabled):hover .ui-button-arrow,
 	.ui-button-primary:not(:disabled):not(.ui-disabled):focus-visible .ui-button-arrow,
 	.ui-project-row:hover .ui-project-shift,
 	.ui-project-row:focus-within .ui-project-shift {
+		transform: none;
+	}
+
+	.ui-button-primary:not(:disabled):not(.ui-disabled):active {
+		translate: none;
+	}
+
+	.hero-word {
+		animation: none;
+		opacity: 1;
 		transform: none;
 	}
 }
@@ -292,8 +429,41 @@ body::after {
 	mix-blend-mode: normal;
 }
 
+@keyframes page-transition-out {
+	to {
+		opacity: 0;
+		transform: translateY(-8px);
+	}
+}
+
+@keyframes page-transition-in {
+	from {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+:root[data-page-transition]::view-transition-old(root) {
+	animation: page-transition-out 180ms var(--ease-out-expo) both;
+}
+
+:root[data-page-transition]::view-transition-new(root) {
+	animation: page-transition-in 280ms var(--ease-out-expo) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
+	::view-transition-old(root),
 	::view-transition-new(root) {
+		animation: none;
+	}
+
+	:root[data-page-transition]::view-transition-old(root),
+	:root[data-page-transition]::view-transition-new(root) {
 		animation: none;
 	}
 }

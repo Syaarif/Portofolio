@@ -9,7 +9,7 @@
 </script>
 
 <!-- pendidikan -->
-<section id="pendidikan" class="border-t border-line">
+<section id="pendidikan" class="scroll-reveal border-t border-line">
 	<div class="mx-auto max-w-[1440px] px-6 pt-5 pb-14 lg:px-24 lg:pb-24">
 		<p class="font-mono text-[11px] tracking-[1.1px]">PENDIDIKAN</p>
 
@@ -33,13 +33,22 @@
 </section>
 
 <!-- tech stack -->
-<section id="stack" class="border-t border-line">
+<section id="stack" class="scroll-reveal border-t border-line">
 	<div class="mx-auto max-w-[1440px] px-6 pt-5 pb-14 lg:px-24 lg:pb-24">
 		<p class="font-mono text-[11px] tracking-[1.1px]">TECH STACK</p>
 
-		<div class="mt-7 flex flex-col gap-10 lg:mt-10">
+		<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+		<div
+			class="-mx-6 mt-7 flex snap-x snap-mandatory scroll-px-6 gap-5 overflow-x-auto px-6 pb-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lg:mx-0 lg:mt-10 lg:flex-col lg:gap-10 lg:overflow-visible lg:px-0 lg:pb-0"
+			role="region"
+			aria-label="Daftar kategori tech stack"
+			tabindex="0"
+			data-lenis-prevent-touch
+		>
 			{#each groups as group (group)}
-				<div class="flex flex-col gap-4">
+				<div
+					class="flex w-[min(85vw,300px)] shrink-0 snap-start flex-col gap-4 lg:w-full lg:shrink lg:snap-none"
+				>
 					<span class="font-mono text-[11px] tracking-[1.1px] text-muted">{group}</span>
 					<div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
 						{#each techStack.filter((t) => t.group === group) as tech (tech.name)}

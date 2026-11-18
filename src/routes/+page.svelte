@@ -139,25 +139,28 @@
 				<nav
 					id="mobile-navigation"
 					aria-label="Navigasi utama"
-					class="absolute top-[calc(100%+10px)] right-0 left-0 flex flex-col gap-1 rounded-2xl border border-line bg-bg/95 p-3 shadow-xl backdrop-blur-md lg:hidden"
+					class="absolute top-[calc(100%+10px)] right-0 left-0 flex flex-col gap-1 rounded-2xl border border-line bg-bg/95 p-3 opacity-100 shadow-xl backdrop-blur-md transition-[opacity,transform] duration-200 ease-out-expo motion-reduce:transition-none lg:hidden motion-safe:starting:[transform:translateY(-8px)] motion-safe:starting:opacity-0"
 				>
-					<NavLink href="#proyek">Proyek</NavLink>
-					<NavLink href="#tentang">Tentang</NavLink>
-					<NavLink href="#kontak">Kontak</NavLink>
-					<NavLink href="#galeri">Galeri</NavLink>
-					<NavLink href="#pendidikan">Pendidikan</NavLink>
-					<NavLink href="#stack">Stack</NavLink>
+					<NavLink href="#proyek" onclick={() => (menuOpen = false)}>Proyek</NavLink>
+					<NavLink href="#tentang" onclick={() => (menuOpen = false)}>Tentang</NavLink>
+					<NavLink href="#kontak" onclick={() => (menuOpen = false)}>Kontak</NavLink>
+					<NavLink href="#galeri" onclick={() => (menuOpen = false)}>Galeri</NavLink>
+					<NavLink href="#pendidikan" onclick={() => (menuOpen = false)}>Pendidikan</NavLink>
+					<NavLink href="#stack" onclick={() => (menuOpen = false)}>Stack</NavLink>
 				</nav>
 			{/if}
 		</div>
 	</header>
 
 	<!-- hero -->
-	<section class="mx-auto max-w-[1440px] px-6 pt-16 pb-14 lg:px-24 lg:pt-[120px]">
+	<section class="scroll-reveal mx-auto max-w-[1440px] px-6 pt-16 pb-14 lg:px-24 lg:pt-[120px]">
 		<h1
+			aria-label="Muhammad Syaarif"
 			class="text-[62px] leading-[0.88] font-medium tracking-[-1.6px] lg:text-[100px] lg:tracking-[-9px]"
 		>
-			Muhammad Syaarif
+			<span class="hero-word" aria-hidden="true" style="--i: 0">Muhammad</span>
+			{' '}
+			<span class="hero-word" aria-hidden="true" style="--i: 1">Syaarif</span>
 		</h1>
 
 		<div class="mt-7 flex flex-col gap-6">
@@ -196,18 +199,18 @@
 	<div class="border-t border-line">
 		<img
 			src="/images/band-light.png"
-			alt="band"
+			alt=""
 			class="h-[220px] w-full object-cover lg:h-[420px] dark:hidden"
 		/>
 		<img
 			src="/images/band-dark.png"
-			alt="band"
+			alt=""
 			class="hidden h-[220px] w-full object-cover lg:h-[420px] dark:block"
 		/>
 	</div>
 
 	<!-- proyek -->
-	<section id="proyek" class="border-t border-line">
+	<section id="proyek" class="scroll-reveal border-t border-line">
 		<div class="mx-auto max-w-[1440px] px-6 pt-5 pb-14 lg:px-24 lg:pb-24">
 			<p class="font-mono text-[11px] tracking-[1.1px]">PROYEK</p>
 
@@ -220,7 +223,7 @@
 	</section>
 
 	<!-- tentang -->
-	<section id="tentang" class="border-t border-line">
+	<section id="tentang" class="scroll-reveal border-t border-line">
 		<div class="mx-auto max-w-[1440px] px-6 pt-5 pb-14 lg:px-24 lg:pb-24">
 			<p class="font-mono text-[11px] tracking-[1.1px]">TENTANG</p>
 
@@ -268,7 +271,7 @@
 	</section>
 
 	<!-- Galeri -->
-	<section id="galeri" class="border-t border-line">
+	<section id="galeri" class="scroll-reveal border-t border-line">
 		<div class="mx-auto max-w-[1440px] px-6 pt-5 pb-14 lg:px-24 lg:pb-24">
 			<p class="font-mono text-[11px] tracking-[1.1px]">GALERI</p>
 			<div class="mt-7 grid grid-cols-1 gap-16 lg:mt-10 lg:grid-cols-2 lg:gap-24">
@@ -280,7 +283,7 @@
 	<Credentials {education} {techStack} />
 
 	<!-- kontak -->
-	<section id="kontak" class="border-t border-line">
+	<section id="kontak" class="scroll-reveal border-t border-line">
 		<div class="mx-auto max-w-[1440px] px-6 pt-5 pb-14 lg:px-24 lg:pb-24">
 			<p class="font-mono text-[11px] tracking-[1.1px]">KONTAK</p>
 

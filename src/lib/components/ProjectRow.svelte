@@ -7,10 +7,39 @@
 	};
 
 	let { project, index }: Props = $props();
+
+	function updateSpotlight(event: PointerEvent) {
+		if (
+			event.pointerType === 'touch' ||
+			!matchMedia('(pointer: fine)').matches ||
+			matchMedia('(prefers-reduced-motion: reduce)').matches
+		) {
+			return;
+		}
+
+		const row = event.currentTarget as HTMLElement;
+		const bounds = row.getBoundingClientRect();
+		row.style.setProperty('--spotlight-x', `${event.clientX - bounds.left}px`);
+		row.style.setProperty('--spotlight-y', `${event.clientY - bounds.top}px`);
+	}
+
+	function clearSpotlight(event: PointerEvent) {
+		if (event.pointerType === 'touch') return;
+		const row = event.currentTarget as HTMLElement;
+		row.style.removeProperty('--spotlight-x');
+		row.style.removeProperty('--spotlight-y');
+	}
 </script>
 
-<div class="ui-project-row group flex flex-col gap-2.5 py-7">
-	<div class="flex items-center justify-between">
+<div
+	role="group"
+	aria-label="Proyek {project.title}"
+	class="ui-project-row group relative isolate flex flex-col gap-2.5 py-7"
+	onpointermove={updateSpotlight}
+	onpointerleave={clearSpotlight}
+>
+	<span class="project-spotlight" aria-hidden="true"></span>
+	<div class="relative z-10 flex items-center justify-between">
 		<span class="ui-project-shift font-mono text-[11px] tracking-[1.1px]">
 			{String(index + 1).padStart(2, '0')}
 		</span>
@@ -42,8 +71,38 @@
 		</div>
 	</div>
 
-	<h2 class="ui-project-shift text-[28px] leading-[1.15] font-medium tracking-[-0.5px]">
+	<h2
+		class="ui-project-shift relative z-10 text-[28px] leading-[1.15] font-medium tracking-[-0.5px]"
+	>
 		{project.title}
 	</h2>
-	<p class="text-[15px] leading-[1.55] text-muted">{project.description}</p>
+	<p class="relative z-10 text-[15px] leading-[1.55] text-muted">{project.description}</p>
 </div>
+
+<style>
+	.project-spotlight {
+		position: absolute;
+		z-index: 0;
+		inset: 0;
+		pointer-events: none;
+		background: radial-gradient(
+			340px circle at var(--spotlight-x, 50%) var(--spotlight-y, 50%),
+			color-mix(in srgb, var(--primary) 10%, transparent),
+			transparent 72%
+		);
+		opacity: 0;
+		transition: opacity 180ms var(--ease-out-expo);
+	}
+
+	@media (pointer: fine) and (prefers-reduced-motion: no-preference) {
+		.ui-project-row:hover .project-spotlight {
+			opacity: 1;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.project-spotlight {
+			display: none;
+		}
+	}
+</style>
